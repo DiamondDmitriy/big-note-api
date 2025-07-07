@@ -15,8 +15,9 @@
 *.out
 
 # Dependency directories (remove the comment below to include it)
-vendor/
-runtime/
+/vendor/
+/runtime/
+/go.sum
 
 # Go workspace file
 go.work
