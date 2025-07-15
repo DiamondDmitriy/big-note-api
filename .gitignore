@@ -25,5 +25,5 @@ go.work.sum
 config/config.yml
 
 # env file
-.env
+config/.env
 .idea

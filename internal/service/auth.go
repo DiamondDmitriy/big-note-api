@@ -1,14 +1,15 @@
 package service
 
-//import (
+// import (
+//
 //	"fmt"
 //	"github.com/golang-jwt/jwt/v5"
 //	"github.com/spf13/viper"
 //	"log"
-//)
 //
-//type Auth struct{}
-//
+// )
+type AuthService struct{}
+
 //func (a *Auth) JWTVerifyUser(token string) bool {
 //	//ParseWithClaims
 //	jwtToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {

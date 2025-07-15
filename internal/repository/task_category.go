@@ -1,0 +1,90 @@
+package repository
+
+import (
+	"database/sql"
+	entity "github.com/DiamondDmitriy/big-note-api/internal/entity/task"
+)
+
+type TaskCategoryRepository struct {
+	db *sql.DB
+}
+
+func NewTaskCategoryRepository(db *sql.DB) *TaskCategoryRepository {
+	return &TaskCategoryRepository{db}
+}
+
+func (r *TaskCategoryRepository) scanTaskCategory(row *sql.Row) (entity.Category, error) {
+	var taskCategory entity.Category
+	err := row.Scan(
+		&taskCategory.Id,
+		&taskCategory.Name,
+		&taskCategory.CreatedAt,
+		&taskCategory.UpdatedAt,
+	)
+	return taskCategory, err
+}
+
+func (r *TaskCategoryRepository) GetAll() ([]entity.Category, error) {
+	var taskCategories []entity.Category
+	query := "SELECT id ,name, created_at, updated_at FROM todo.categories"
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var taskCategory entity.Category
+		// todo: повторяется
+		if err := rows.Scan(
+			&taskCategory.Id,
+			&taskCategory.Name,
+			&taskCategory.CreatedAt,
+			&taskCategory.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+
+		taskCategories = append(taskCategories, taskCategory)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return taskCategories, nil
+}
+
+func (r *TaskCategoryRepository) GetOne(id int) (entity.Category, error) {
+	query := "SELECT id ,name, created_at, updated_at FROM todo.categories WHERE id=$1"
+	row := r.db.QueryRow(query, id)
+	category, err := r.scanTaskCategory(row)
+	if err != nil {
+		return entity.Category{}, err
+	}
+	return category, nil
+}
+
+func (r *TaskCategoryRepository) Create(name string) (entity.Category, error) {
+	query := "INSERT INTO todo.categories (name) VALUES($1) RETURNING id, name, created_at, updated_at"
+	row := r.db.QueryRow(query, name)
+	category, err := r.scanTaskCategory(row)
+
+	if err != nil {
+		return entity.Category{}, err
+	}
+	return category, nil
+}
+
+func (r *TaskCategoryRepository) Update(id int, name string) error {
+	return nil
+}
+
+func (r *TaskCategoryRepository) Delete(id int) error {
+	query := "DELETE FROM todo.categories WHERE id=$1"
+	_, err := r.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
