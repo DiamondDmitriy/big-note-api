@@ -23,7 +23,7 @@ func main() {
 	}
 
 	repositories := repository.NewRepositories(db)
-	services := service.NewServices(repositories)
+	services := service.NewServices(repositories, cnf)
 	controllers := controller.NewControllers(repositories, services)
 
 	routes := &route.Route{

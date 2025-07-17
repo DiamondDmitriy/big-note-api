@@ -20,14 +20,15 @@ func (r *TaskCategoryRepository) scanTaskCategory(row *sql.Row) (entity.Category
 		&taskCategory.Name,
 		&taskCategory.CreatedAt,
 		&taskCategory.UpdatedAt,
+		&taskCategory.UserId,
 	)
 	return taskCategory, err
 }
 
 func (r *TaskCategoryRepository) GetAll() ([]entity.Category, error) {
 	var taskCategories []entity.Category
-	query := "SELECT id ,name, created_at, updated_at FROM todo.categories"
-	rows, err := r.db.Query(query)
+	query := "SELECT id ,name, created_at, updated_at, user_id FROM todo.categories WHERE user_id=$1"
+	rows, err := r.db.Query(query, 1)
 	if err != nil {
 		return nil, err
 	}

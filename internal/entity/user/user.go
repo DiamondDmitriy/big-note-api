@@ -1,17 +1,21 @@
 package user
 
+import "time"
+
 type User struct {
-	Id         int    `json:"id"`
-	Email      string `json:"email"`
-	Username   string `json:"username"`
-	Name       string `json:"name"`
-	Surname    string `json:"surname"`
-	Patronymic string `json:"patronymic"`
-	Role       string `json:"role"`
+	Id           string    `json:"id"`
+	Username     string    `json:"username"`
+	Email        string    `json:"email"`
+	PasswordHash []byte    `json:"password_hash,omitempty"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	Name         string    `json:"name"`
+	Surname      string    `json:"surname"`
+	//Role     string `json:"role"`
 }
 
-// Login todo: авторизация по логину или почте
-type Login struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
+//// Login todo: авторизация по логину или почте
+//type Login struct {
+//	Username string `json:"username"`
+//	Password string `json:"password"`
+//}

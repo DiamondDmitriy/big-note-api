@@ -1,8 +1,11 @@
 package route
 
 import (
+	"errors"
+	"fmt"
 	"github.com/DiamondDmitriy/big-note-api/config"
 	"github.com/DiamondDmitriy/big-note-api/internal/controller"
+	"github.com/DiamondDmitriy/big-note-api/internal/service"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -15,21 +18,24 @@ type Route struct {
 	Controller *controller.Controller
 }
 
-func authenticationUser(ctx *gin.Context) {
-	//authHeaderValue := ctx.GetHeader("Authorization")
-	//
-	//if authHeaderValue != "" {
-	//	bearerToken := strings.Split(authHeaderValue, " ")
-	//	if len(bearerToken) == 2 && bearerToken[0] == "Bearer" {
-	//		authService := new(service.Auth)
-	//
-	//		if authService.JWTVerifyUser(bearerToken[1]) {
-	//			ctx.Next()
-	//		}
-	//	}
-	//}
-	//
-	//ctx.AbortWithError(http.StatusUnauthorized, errors.New("unauthorized"))
+func (r *Route) authenticationUser(ctx *gin.Context) {
+	authHeaderValue := ctx.GetHeader("Authorization")
+
+	fmt.Println(authHeaderValue)
+	if authHeaderValue != "" {
+		bearerToken := strings.Split(authHeaderValue, " ")
+		fmt.Println(bearerToken)
+		if len(bearerToken) == 2 && bearerToken[0] == "Bearer" {
+			TokenPassword := r.Config.JWT.TokenPassword
+
+			if service.VerifyUserTokenJWT(bearerToken[1], TokenPassword) {
+				ctx.Next()
+				return
+			}
+		}
+	}
+
+	ctx.AbortWithError(http.StatusUnauthorized, errors.New("unauthorized"))
 }
 
 // Конфигурация CORS
@@ -60,20 +66,11 @@ func (r *Route) Init() *gin.Engine {
 		gin.Logger(),   // Логирование
 	)
 
-	//r.AuthRoute(router)
-
-	//// Public routes
-	//auth := router.Group("/auth")
-	//{
-	//	auth.POST("/sign-in", r.Handlers.sighIn)
-	//	auth.POST("/sign-up", h.sighUp)
-	//}
-	//
-	//// //router.ContextWithFallback
-	//
+	// Public routes
+	r.AuthRoutes(router)
 	api := router.Group("/api")
 	// Protected API routes
-	api.Use(authenticationUser)
+	api.Use(r.authenticationUser)
 	r.TaskRoutes(api)
 
 	return router
