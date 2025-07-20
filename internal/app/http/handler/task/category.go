@@ -1,10 +1,8 @@
-package task
+package taskhandler
 
 import (
 	"database/sql"
 	"errors"
-	"github.com/DiamondDmitriy/big-note-api/internal/repository"
-	"github.com/DiamondDmitriy/big-note-api/internal/service"
 	"github.com/DiamondDmitriy/big-note-api/pkg/rest"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -12,9 +10,9 @@ import (
 )
 
 type CategoryController struct {
-	Repo     *repository.TaskCategoryRepository
-	TaskRepo *repository.TaskRepository
-	Service  *service.TaskCategoryService
+	//Repo     *repository.TaskCategoryRepository
+	//TaskRepo *repository.TaskRepository
+	//Service  *service.TaskCategoryService
 }
 
 func (c *CategoryController) TaskCategoryGetOne(ctx *gin.Context) {
@@ -44,7 +42,10 @@ func (c *CategoryController) TaskCategoryGetOne(ctx *gin.Context) {
 func (c *CategoryController) TaskCategoryGetAll(ctx *gin.Context) {
 	includeTasks := ctx.Query("include_tasks") == "true"
 
-	categories, err := c.Repo.GetAll()
+	userId, _ := ctx.Get("userId")
+	userIdStr := userId.(string)
+
+	categories, err := c.Repo.GetAll(userIdStr)
 	if err != nil {
 		rest.ResponseError(ctx, http.StatusInternalServerError, "Server operation failed", err.Error())
 		return
@@ -81,8 +82,21 @@ func (c *CategoryController) TaskCategoryCreate(ctx *gin.Context) {
 		rest.ResponseError(ctx, http.StatusBadRequest, "Name cannot be empty", nil)
 		return
 	}
+	userId, exists := ctx.Get("userId")
+	if !exists {
+		rest.ResponseError(ctx, http.StatusInternalServerError, "UserId undefined", nil)
+		return
+	}
 
-	category, err := c.Repo.Create(requestData.Name)
+	//fmt.Println(userId)
+	userIdStr, ok := userId.(string)
+	//fmt.Println(userIdInt)
+	if !ok {
+		rest.ResponseError(ctx, http.StatusInternalServerError, "Invalid user ID type ", nil)
+		return
+	}
+
+	category, err := c.Repo.Create(requestData.Name, userIdStr)
 
 	if err != nil {
 		rest.ResponseError(ctx, http.StatusInternalServerError, "Failed to create category", err.Error())

@@ -4,10 +4,10 @@ import (
 	bigNoteApi "github.com/DiamondDmitriy/big-note-api"
 	"github.com/DiamondDmitriy/big-note-api/config"
 	"github.com/DiamondDmitriy/big-note-api/database"
-	"github.com/DiamondDmitriy/big-note-api/internal/controller"
+	"github.com/DiamondDmitriy/big-note-api/internal/app/http/handler"
+	"github.com/DiamondDmitriy/big-note-api/internal/app/http/route"
+	"github.com/DiamondDmitriy/big-note-api/internal/core/service"
 	"github.com/DiamondDmitriy/big-note-api/internal/repository"
-	"github.com/DiamondDmitriy/big-note-api/internal/route"
-	"github.com/DiamondDmitriy/big-note-api/internal/service"
 	"log"
 )
 
@@ -24,7 +24,7 @@ func main() {
 
 	repositories := repository.NewRepositories(db)
 	services := service.NewServices(repositories, cnf)
-	controllers := controller.NewControllers(repositories, services)
+	controllers := handler.NewControllers(repositories, services)
 
 	routes := &route.Route{
 		Config:     cnf,

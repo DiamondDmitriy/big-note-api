@@ -2,7 +2,7 @@ package user
 
 import (
 	"database/sql"
-	entity "github.com/DiamondDmitriy/big-note-api/internal/entity/user"
+	entity "github.com/DiamondDmitriy/big-note-api/internal/core/entity/user"
 )
 
 type Repository struct {

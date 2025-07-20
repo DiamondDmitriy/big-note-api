@@ -1,6 +1,8 @@
 package auth
 
-import userEntity "github.com/DiamondDmitriy/big-note-api/internal/entity/user"
+import (
+	userEntity "github.com/DiamondDmitriy/big-note-api/internal/core/entity/user"
+)
 
 type UserWithToken struct {
 	Token string           `json:"token"`

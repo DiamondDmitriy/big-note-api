@@ -13,9 +13,3 @@ type User struct {
 	Surname      string    `json:"surname"`
 	//Role     string `json:"role"`
 }
-
-//// Login todo: авторизация по логину или почте
-//type Login struct {
-//	Username string `json:"username"`
-//	Password string `json:"password"`
-//}

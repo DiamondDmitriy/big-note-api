@@ -14,6 +14,14 @@ func (r *Route) TaskRoutes(api *gin.RouterGroup) {
 		tasks.GET("/categories", ctrlCategory.TaskCategoryGetAll)
 	}
 
+	taskCategory := tasks.Group("/category")
+	{
+		taskCategory.GET("/:id", ctrlCategory.TaskCategoryGetOne)
+		taskCategory.POST("", ctrlCategory.TaskCategoryCreate)
+		taskCategory.PATCH("/:id", ctrlCategory.TaskCategoryUpdate)
+		taskCategory.DELETE("/:id", ctrlCategory.TaskCategoryDelete)
+	}
+
 	task := api.Group("/task")
 	{
 		task.GET("/:id", ctrlTask.TaskGetOne)
@@ -21,13 +29,5 @@ func (r *Route) TaskRoutes(api *gin.RouterGroup) {
 		task.PUT("/:id", ctrlTask.TaskUpdate) // PUT для полного обновления
 		//task.PATCH("/:id", nil)         // PATCH для частичного
 		task.DELETE("/:id", ctrlTask.TaskDelete)
-	}
-
-	taskCategory := tasks.Group("/category")
-	{
-		taskCategory.GET("/:id", ctrlCategory.TaskCategoryGetOne)
-		taskCategory.POST("", ctrlCategory.TaskCategoryCreate)
-		taskCategory.PATCH("/:id", ctrlCategory.TaskCategoryUpdate)
-		taskCategory.DELETE("/:id", ctrlCategory.TaskCategoryDelete)
 	}
 }

@@ -2,10 +2,8 @@ package route
 
 import (
 	"errors"
-	"fmt"
 	"github.com/DiamondDmitriy/big-note-api/config"
-	"github.com/DiamondDmitriy/big-note-api/internal/controller"
-	"github.com/DiamondDmitriy/big-note-api/internal/service"
+	"github.com/DiamondDmitriy/big-note-api/internal/core/service"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -15,20 +13,20 @@ import (
 
 type Route struct {
 	Config     *config.Config
-	Controller *controller.Controller
+	Controller *handler.Controller
 }
 
 func (r *Route) authenticationUser(ctx *gin.Context) {
 	authHeaderValue := ctx.GetHeader("Authorization")
 
-	fmt.Println(authHeaderValue)
+	//fmt.Println(authHeaderValue)
 	if authHeaderValue != "" {
 		bearerToken := strings.Split(authHeaderValue, " ")
-		fmt.Println(bearerToken)
 		if len(bearerToken) == 2 && bearerToken[0] == "Bearer" {
 			TokenPassword := r.Config.JWT.TokenPassword
 
-			if service.VerifyUserTokenJWT(bearerToken[1], TokenPassword) {
+			if result, claims := service.VerifyUserTokenJWT(bearerToken[1], TokenPassword); result {
+				ctx.Set("userId", claims.ID)
 				ctx.Next()
 				return
 			}

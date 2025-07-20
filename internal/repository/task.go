@@ -2,7 +2,7 @@ package repository
 
 import (
 	"database/sql"
-	"github.com/DiamondDmitriy/big-note-api/internal/entity/task"
+	"github.com/DiamondDmitriy/big-note-api/internal/core/entity/task"
 )
 
 type TaskRepository struct {
